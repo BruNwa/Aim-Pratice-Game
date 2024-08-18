@@ -60,7 +60,21 @@ def draw(win, targets):
     for target in targets:
         target.draw(win)
         
-    
+class Button:
+    def __init__(self, x, y, width, height, text):
+        self.rect = pygame.Rect(x, y, width, height)
+        self.text = text
+        self.font = pygame.font.SysFont("family", 30)
+        self.color = (255, 255, 255)
+        self.text_color = (0, 0, 0)
+
+    def draw(self, win):
+        pygame.draw.rect(win, self.color, self.rect)
+        text_surface = self.font.render(self.text, True, self.text_color)
+        win.blit(text_surface, (self.rect.x + (self.rect.width - text_surface.get_width()) // 2, self.rect.y + (self.rect.height - text_surface.get_height()) // 2))
+
+    def is_clicked(self, pos):
+        return self.rect.collidepoint(pos)    
 
 def format_time(secs):
     milli = math.floor(int(secs* 1000%1000)/ 100)
@@ -91,26 +105,39 @@ def draw_top_bar(win, elapsed_time, target_pressed, misses):
     
 def end_screen(win, elapsed_time, target_pressed, clicks):
     win.fill(BG_COLOR)   
-    time_lebel = LABEL_FONT.render(f"Time: {format_time(elapsed_time)}", 1 , "white")
+    time_label = LABEL_FONT.render(f"Time: {format_time(elapsed_time)}", 1 , "white")
     speed = round(target_pressed / elapsed_time, 1)
-    speed_label= LABEL_FONT.render(f"Speed: {speed} t/s",1, "white")
+    speed_label = LABEL_FONT.render(f"Speed: {speed} t/s", 1, "white")
     hits_label = LABEL_FONT.render(f"Hits: {target_pressed}", 1, "white")
     if clicks > 0:
         accuracy = round(target_pressed / clicks * 100, 1)
     else:
         accuracy = 0.0
-    accuracy_label = LABEL_FONT.render(f"Accuracy: {accuracy}", 1, "white")
-    win.blit(time_lebel, (get_mid(time_lebel),100))
+    accuracy_label = LABEL_FONT.render(f"Accuracy: {accuracy}%", 1, "white")
+
+    win.blit(time_label, (get_mid(time_label), 100))
     win.blit(speed_label, (get_mid(speed_label), 200))
     win.blit(hits_label, (get_mid(hits_label), 300))
     win.blit(accuracy_label, (get_mid(accuracy_label), 400))
-    
+
+    # Create and draw replay button
+    replay_button = Button(WIDTH // 2 - 75, HEIGHT // 2 + 100, 150, 50, "Replay")
+    replay_button.draw(win)
+
     pygame.display.update()
     run = True
     while run:
         for event in pygame.event.get():
-            if event.type == pygame.QUIT or event.type == pygame.KEYDOWN:
+            if event.type == pygame.QUIT:
                 quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if replay_button.is_clicked(pygame.mouse.get_pos()):
+                    main()  # Restart the game
+                    return
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q:
+                    quit()
+
            
     
     
