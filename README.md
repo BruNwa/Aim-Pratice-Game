@@ -18,7 +18,7 @@ pip install pygame
 
 # Usage
 Clone the repository
-git clone https://github.com/yourusername/aim-game.git
+git clone https://github.com/BruNwa/Aim-Pratice-Game.git
 cd aim-game
 
 Run the game
